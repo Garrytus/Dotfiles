@@ -1,0 +1,67 @@
+[include]
+    path = gitcreds/credentials
+
+[core]
+  editor = nvim
+  pager = delta
+
+[init]
+  defaultBranch = main
+
+[interactive]
+    diffFilter = delta --color-only
+
+[diff]
+  colorMoved = default
+
+[delta]
+	dark = true
+  blame-format = "{author:<18} ({commit:>7}) ┊{timestamp:^16}┊ "
+	blame-palette = "#24273a #1e2030 #181926 #363a4f #494d64"
+	commit-decoration-style = "#6e738d" bold box
+	file-decoration-style = "#6e738d"
+	file-style = "#cad3f5"
+  file-added-label = 
+  file-copied-label = [==]
+  file-modified-label = 
+  file-removed-label = 󱂥
+  file-renamed-label = 󰑕
+	hunk-header-decoration-style = "#6e738d" ul
+	hunk-header-file-style = bold
+	hunk-header-line-number-style = bold "#a5adcb"
+	hunk-header-style = file line-number syntax
+  line-numbers-left-format = "{nm:>1} ┊"
+	line-numbers-left-style = "#6e738d"
+	line-numbers-minus-style = "#ed8796"
+	line-numbers-plus-style = "#a6da95"
+  line-numbers-right-format = "{np:>1} ┊"
+	line-numbers-right-style = "#6e738d"
+  line-numbers = true
+	line-numbers-zero-style = "#6e738d"
+	# 35% red 65% base
+	minus-emph-style = syntax bold "#6a485a"
+	# 20% red 80% base
+	minus-style = syntax "#4c3a4c"
+	# 35% green 65% base
+	plus-emph-style = syntax bold "#51655a"
+	# 20% green 80% base
+	plus-style = syntax "#3e4b4c"
+  zero-style = syntax
+  whitespace-error-style = "#eed49f" reverse
+	map-styles = \
+		bold purple => syntax "#5c517c", \
+		bold blue => syntax "#47557b", \
+		bold cyan => syntax "#4a6475", \
+		bold yellow => syntax "#6a635d"
+  merge-conflict-begin-symbol = "󰜥"
+  merge-conflict-end-symbol = " 󰜥 "
+  ; merge-conflict-ours-diff-header-style
+  merge-conflict-ours-diff-header-decoration-style = bold "#40a02b" box
+  ; merge-conflict-theirs-diff-header-style
+  merge-conflict-theirs-diff-header-decoration-style = bold "#209fb5" box
+
+[merge]
+  conflictstyle = zdiff3
+
+[log]
+  date = iso-local
