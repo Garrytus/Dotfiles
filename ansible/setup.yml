@@ -1,0 +1,107 @@
+---
+# Quick setup of my stack
+
+- name: Configure my profile
+  hosts: localhost
+  connection: local
+
+  tasks:
+
+    - name: Ensure my favorite packages are installed
+      block:
+        - name: Installing packages
+          ansible.builtin.package:
+            name:
+              - fd
+              - fzf
+              - neovim
+              - python-pipx
+              - python-poetry
+              - stow
+              - wl-clipboard
+          ignore_errors: true
+
+      become: true
+
+    - name: Ensure 0xProto font dir exists
+      ansible.builtin.file:
+        path: ~/.local/share/fonts/0xProto
+        state: directory
+
+    - name: Ensure my gitcreds folder exists
+      ansible.builtin.file:
+        path: ~/gitcreds
+        state: directory
+
+    - name: Copy the gitcreds/credentials template
+      ansible.builtin.copy:
+        src: git_credentials.template
+        dest: ~/gitcreds/credentials
+        force: false
+
+    - name: Check if LazyVim is installed
+      ansible.builtin.stat:
+        path: ~/.config/nvim/lazyvim.json
+      register: lazyvim_json_file
+
+    - name: Install LazyVim
+      block:
+          # A bit dirty
+        - ansible.builtin.shell: |
+            mv ~/.config/nvim{,.bak}
+          args:
+            executable: /bin/bash
+          ignore_errors: true
+
+        - name: Clone the LazyVim starter
+          ansible.builtin.git:
+            repo: https://github.com/LazyVim/starter
+            dest: ~/.config/nvim
+
+        - name: Find my stowed nvim dotfiles
+          find:
+            paths: "{{ playbook_dir | dirname }}/nvim/.config/nvim"
+            recurse: true
+            file_type: file
+          register: nvim_files
+
+        - name: Remove existing conflicting files from the starter
+          file:
+            path: "~/.config/nvim/{{ item.path | regex_replace('^.*/nvim/.config/nvim/', '') }}"
+            state: absent
+          loop: "{{ nvim_files.files }}"
+
+      when: not lazyvim_json_file.stat.exists
+
+    - name: Download and unarchive 0xProto font
+      ansible.builtin.unarchive:
+        src: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/0xProto.zip
+        dest: ~/.local/share/fonts/0xProto
+        exclude:
+          - "*.txt"
+          - "*.md"
+          - LICENSE
+        remote_src: true
+
+    - name: Clone Oh My Zsh
+      ansible.builtin.git:
+        repo: https://github.com/ohmyzsh/ohmyzsh.git
+        dest: ~/.oh-my-zsh
+        depth: 1
+
+    - name: Clone Oh My Zsh spaceship prompt theme
+      ansible.builtin.git:
+        repo: https://github.com/spaceship-prompt/spaceship-prompt.git
+        dest: ~/.oh-my-zsh/themes/spaceship-prompt
+        depth: 1
+
+    - ansible.builtin.file:
+        src: ~/.oh-my-zsh/themes/spaceship-prompt/spaceship.zsh-theme
+        dest: ~/.oh-my-zsh/themes/spaceship.zsh-theme
+        state: link
+
+    - name: Clone Oh My Zsh spaceship vi-mode plugin
+      ansible.builtin.git:
+        repo: https://github.com/spaceship-prompt/spaceship-vi-mode.git
+        dest: ~/.oh-my-zsh/plugins/spaceship-vi-mode
+        depth: 1
