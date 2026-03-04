@@ -91,6 +91,9 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+# Pipx autocompletion
+source "${HOME}/.config/pipx_completion.zsh"
+
 # export MANPATH="/usr/local/man:$MANPATH"
 export EDITOR="nvim"
 export SUDO_EDITOR="/opt/nvim-linux-x86_64/bin/nvim"
