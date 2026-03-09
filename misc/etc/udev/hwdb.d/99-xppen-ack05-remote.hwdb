@@ -1,0 +1,3 @@
+# Fix from https://www.davidrevoy.com/static2/about-me
+evdev:input:b0003v28BDp0202*
+  KEYBOARD_KEY_7001d=0x11 # french keyboard fix Ctrl+Z [z] => [w]
