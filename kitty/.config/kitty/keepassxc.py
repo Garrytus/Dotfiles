@@ -23,24 +23,17 @@ class KeePassXC:
         database: str,
         *,
         key_file: Optional[str] = None,
-        cli_path: Optional[str] = None,
     ):
         """Initialize Keepassxc."""
         self.database = Path(database).expanduser()
         self.key_file = Path(key_file).expanduser() if key_file else None
 
-        if cli_path:
-            if not Path(cli_path).is_file():
-                raise KeePassXCNotFoundError(f"keepassxc-cli not found in: {cli_path}")
-            self.cli_path = cli_path
-
-        else:
-            found = shutil.which("keepassxc-cli")
-            if not found:
-                raise KeePassXCNotFoundError(
-                    "keepassxc-cli not installed or not in the PATH."
-                )
-            self.cli_path = found
+        keepassxc_cli_path = shutil.which("keepassxc-cli")
+        if not keepassxc_cli_path:
+            raise KeePassXCNotFoundError(
+                "keepassxc-cli not installed or not in the PATH."
+            )
+        self.cli_path = keepassxc_cli_path
 
     def _run(self, subcommand_args: list[str]) -> str:
         """Runs keepassxc-cli and returns to stdout."""
@@ -135,7 +128,3 @@ class KeePassXC:
                 key, _, value = line.partition(":")
                 fields[key.strip()] = value.strip()
         return fields
-
-    def __repr__(self) -> str:
-        """Visual representation."""
-        return f"KeePassXC(database={self.database!r}, key_file={self.key_file!r}, "

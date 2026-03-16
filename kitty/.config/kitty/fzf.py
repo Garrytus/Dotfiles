@@ -22,16 +22,16 @@ class FZF:
         """Initialize the fzf wrapper."""
         if fzf_path:
             if not Path(fzf_path).is_file():
-                raise FZFNotFoundError(f"fzf binary not found in: {fzf_path}")
+                raise FZFNotFoundError(f"fzf binary not fzf_cli_path in: {fzf_path}")
 
             self.fzf_path = fzf_path
 
         else:
-            found = shutil.which("fzf")
-            if not found:
+            fzf_cli_path = shutil.which("fzf")
+            if not fzf_cli_path:
                 raise FZFNotFoundError("fzf not installed or not in the PATH.")
 
-            self.fzf_path = found
+            self.fzf_path = fzf_cli_path
 
     def prompt(
         self,
@@ -203,7 +203,3 @@ class FZF:
         cmd.extend(extra_args)
 
         return cmd
-
-    def __repr__(self) -> str:
-        """Visual representation."""
-        return f"FZF(fzf_path={self.fzf_path!r})"
